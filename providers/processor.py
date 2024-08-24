@@ -9,7 +9,8 @@ from providers.inmobusqueda import Inmobusqueda
 def register_property(conn, prop):
     stmt = 'INSERT INTO properties (internal_id, provider, url) VALUES (:internal_id, :provider, :url)'
     try:
-        conn.execute(stmt, prop)
+        cursor = conn.execute(stmt, prop)
+        prop['id'] = cursor.lastrowid
     except Exception as e:
         print(e)
 
@@ -36,7 +37,8 @@ def process_properties(provider_name, provider_data):
                 logging.info('It is a new one')
                 register_property(conn, prop)
                 new_properties.append(prop)
-                    
+            #else:
+            #    logging.info('Already processed')
     return new_properties
 
 def get_instance(provider_name, provider_data):
