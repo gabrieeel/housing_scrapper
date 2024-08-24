@@ -15,12 +15,12 @@ mccabe==0.6.1
 pycparser==2.19
 pylint==2.3.1
 pyparsing==2.4.7
-python-telegram-bot==11.1.0
-PyYAML==5.4
+python-telegram-bot==21.4
+PyYAML==5.4.1
 requests==2.21.0
 requests-toolbelt==0.9.1
 six==1.12.0
 soupsieve==1.9.1
 typed-ast==1.4.1
-urllib3==1.26.5
+urllib3==1.24.2
 wrapt==1.11.1
