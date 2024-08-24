@@ -2,9 +2,10 @@
 
 import logging
 import yaml
-import sys
+import asyncio
 from lib.notifier import Notifier
 from providers.processor import process_properties
+from lib.db_functions import update_notified_status
 
 # logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -19,13 +20,25 @@ if 'disable_ssl' in cfg:
 
 notifier = Notifier.get_instance(cfg['notifier'], disable_ssl)
 
-new_properties = []
-for provider_name, provider_data in cfg['providers'].items():
-    try:
-        logging.info(f"Processing provider {provider_name}")
-        new_properties += process_properties(provider_name, provider_data)
-    except Exception as e:
-        logging.error(f"Error processing provider {provider_name}.\n{str(e)}")
+async def main():
+    new_properties = []
+    for provider_name, provider_data in cfg['providers'].items():
+        try:
+            logging.info(f"Processing provider {provider_name}")
+            new_properties += process_properties(provider_name, provider_data)
+        except Exception as e:
+            logging.error(f"Error processing provider {provider_name}.\n{str(e)}")
 
-if len(new_properties) > 0:
-    notifier.notify(new_properties)
+    if len(new_properties) > 0:
+        try:
+            await notifier.notify(new_properties)
+        except Exception as e:
+            logging.error("error general {e}")
+
+        logging.info('notified?')
+        logging.info('\n'.join(str(p.get('notified', '0')) for p in new_properties))
+
+        update_notified_status(new_properties)
+
+if __name__ == "__main__":
+    asyncio.get_event_loop().run_until_complete(main())
