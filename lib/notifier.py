@@ -3,9 +3,8 @@ import traceback
 import logging
 import random
 from lib.sslless_session import SSLlessSession
-import yaml
+
 from telegram.constants import ParseMode
-import sqlite3
 
 class NullNotifier:
     def notify(self, properties):
